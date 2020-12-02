@@ -2,6 +2,7 @@ package main
 
 import (
 	"../greetpb"
+	"context"
 	"fmt"
 	"google.golang.org/grpc"
 	"log"
@@ -17,5 +18,19 @@ func main() {
 	defer cc.Close()
 
 	c := greetpb.NewGreetServiceClient(cc)
-	fmt.Println("created client", c)
+
+	doUnary(c)
+}
+
+func doUnary(c greetpb.GreetServiceClient) {
+	req := &greetpb.GreetRequest{
+		Greeting: &greetpb.Greeting{
+			FirstName: "Travis",
+			LastName:  "Reyburn",
+		} }
+	resp, err := c.Greet(context.Background(), req)
+	if err != nil {
+		log.Fatalf("Error while calling Greet RPC: %v", err)
+	}
+	log.Printf("Response from Greet RPC: %v", resp.Result)
 }
