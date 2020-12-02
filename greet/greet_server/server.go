@@ -17,19 +17,21 @@ type server struct{}
 
 func (s *server) LongGreet(stream greetpb.GreetService_LongGreetServer) error {
 	fmt.Println("Received a streaming response on LongGreet")
-	res := "Hello, "
+	res := ""
 	for {
 		msg, err := stream.Recv()
 		if errors.Is(err, io.EOF) {
 			err := stream.SendAndClose(&greetpb.LongGreetResponse{Result: res})
 			if err != nil {log.Fatalf("Error sending response: %v", err)}
+			break
 		}
 		if err != nil {
 			log.Fatalf("Error while streaming: %v", err)
 		}
 		fname := msg.GetGreeting().GetFirstName()
-		res += fname
+		res += "Hello "+fname+"! "
 	}
+	return nil
 }
 
 func (s *server) GreetManyTimes(req *greetpb.GreetManyTimesRequest, stream greetpb.GreetService_GreetManyTimesServer) error {
