@@ -27,7 +27,6 @@ func (s *server) GreetEveryone(stream greetpb.GreetService_GreetEveryoneServer) 
 		err = stream.Send(&greetpb.GreetEveryoneResponse{Result: res})
 		if err != nil {log.Fatalf("Error when streaming to client: %v", err)}
 	}
-	return nil
 }
 
 func (s *server) LongGreet(stream greetpb.GreetService_LongGreetServer) error {
