@@ -14,33 +14,24 @@ import (
 type server struct{}
 
 func (s server) Average(stream calculatorpb.CalculatorService_AverageServer) error {
-	nums := make([]int32, 0)
+	fmt.Println("Average service invoked")
+	nums := int32(0)
+	count := int32(0)
 
 	for {
 		req, err := stream.Recv()
 		if errors.Is(err, io.EOF) {
-			break
+			res := float32(nums)/float32(count)
+			err := stream.SendAndClose(&calculatorpb.AverageResponse{Result: res})
+			if err != nil {log.Fatalf("Error when sending response: %v", err)}
+			return nil
 		}
 		if err != nil {
 			log.Fatalf("Error while streaming: %v", err)
 		}
-		nums = append(nums, req.GetNumber())
+		nums += req.GetNumber()
+		count++
 	}
-
-	res := float32(0.0)
-
-	for _, num := range nums {
-		res += float32(num)
-	}
-
-	res /= float32(len(nums))
-
-	err := stream.SendAndClose(&calculatorpb.AverageResponse{Result: res})
-	if err != nil {
-		log.Fatalf("Error when sending response: %v", err)
-	}
-
-	return nil
 }
 
 func (s server) PrimeNumberDecomposition(
