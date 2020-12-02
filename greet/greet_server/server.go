@@ -3,8 +3,10 @@ package main
 import (
 	"../greetpb"
 	"context"
+	"errors"
 	"fmt"
 	"google.golang.org/grpc"
+	"io"
 	"log"
 	"net"
 	"strconv"
@@ -12,6 +14,23 @@ import (
 )
 
 type server struct{}
+
+func (s *server) LongGreet(stream greetpb.GreetService_LongGreetServer) error {
+	fmt.Println("Received a streaming response on LongGreet")
+	res := "Hello, "
+	for {
+		msg, err := stream.Recv()
+		if errors.Is(err, io.EOF) {
+			err := stream.SendAndClose(&greetpb.LongGreetResponse{Result: res})
+			if err != nil {log.Fatalf("Error sending response: %v", err)}
+		}
+		if err != nil {
+			log.Fatalf("Error while streaming: %v", err)
+		}
+		fname := msg.GetGreeting().GetFirstName()
+		res = res + fname
+	}
+}
 
 func (s *server) GreetManyTimes(req *greetpb.GreetManyTimesRequest, stream greetpb.GreetService_GreetManyTimesServer) error {
 	fname := req.GetGreeting().GetFirstName()
