@@ -22,7 +22,8 @@ func main() {
 
 	// callSum(c)
 	// callPrimeNumber(c)
-	callAverage(c)
+	// callAverage(c)
+	callMax(c)
 }
 
 func callSum(c calculatorpb.CalculatorServiceClient) {
@@ -86,4 +87,33 @@ func callAverage(c calculatorpb.CalculatorServiceClient) {
 	if err != nil {log.Fatalf("Error receiving response: %v", err)}
 
 	fmt.Println("Average of numbers is", resp.GetResult())
+}
+
+func callMax(c calculatorpb.CalculatorServiceClient) {
+	nums := []int32{1, 5, 3, 6, 2, 20}
+	stream, err := c.Max(context.Background())
+	if err != nil {log.Fatalf("Error opening stream to Average: %v", err)}
+
+	waitc := make(chan struct{})
+
+	go func() {
+		for _, num := range nums {
+			fmt.Println("Sending", num)
+			err := stream.Send(&calculatorpb.MaxRequest{Number: num})
+			if err != nil {log.Fatalf("Error streaming data: %v", err)}
+			time.Sleep(time.Second)
+		}
+		err := stream.CloseSend()
+		if err != nil {log.Fatalf("Error closing send stream: %v", err)}
+	} ()
+
+	go func () {
+		for {
+			resp, err := stream.Recv()
+			if errors.Is(err, io.EOF) {close(waitc); break}
+			if err != nil {log.Fatalf("Received error from stream: %v", err)}
+			fmt.Println("Max:", resp.GetResult())
+		}
+	} ()
+	<-waitc
 }
