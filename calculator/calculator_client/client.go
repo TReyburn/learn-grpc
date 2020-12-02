@@ -3,6 +3,7 @@ package main
 import (
 	"../calculatorpb"
 	"context"
+	"errors"
 	"fmt"
 	"google.golang.org/grpc"
 	"io"
@@ -50,7 +51,7 @@ func callPrimeNumber(c calculatorpb.CalculatorServiceClient) {
 
 	for {
 		resp, err := stream.Recv()
-		if err == io.EOF {
+		if errors.Is(err, io.EOF) {
 			break
 		}
 		if err != nil {
