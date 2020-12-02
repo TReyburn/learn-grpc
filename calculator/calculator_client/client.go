@@ -8,6 +8,7 @@ import (
 	"google.golang.org/grpc"
 	"io"
 	"log"
+	"time"
 )
 
 func main() {
@@ -19,8 +20,9 @@ func main() {
 
 	c := calculatorpb.NewCalculatorServiceClient(cc)
 
-	//callSum(c)
-	callPrimeNumber(c)
+	// callSum(c)
+	// callPrimeNumber(c)
+	callAverage(c)
 }
 
 func callSum(c calculatorpb.CalculatorServiceClient) {
@@ -66,4 +68,22 @@ func callPrimeNumber(c calculatorpb.CalculatorServiceClient) {
 		fmt.Println(n, "is not prime")
 	}
 	defer fmt.Println(n, "is equal to the following numbers multiplied together", rs)
+}
+
+func callAverage(c calculatorpb.CalculatorServiceClient) {
+	nums := []int32{10, 12, 34, 14, 17, 69, 420}
+	stream, err := c.Average(context.Background())
+	if err != nil {log.Fatalf("Error opening stream to Average: %v", err)}
+
+	for _, num := range nums {
+		fmt.Println("Sending", num)
+		err := stream.Send(&calculatorpb.AverageRequest{Number: num})
+		if err != nil {log.Fatalf("Error streaming data: %v", err)}
+		time.Sleep(time.Second)
+	}
+
+	resp, err := stream.CloseAndRecv()
+	if err != nil {log.Fatalf("Error receiving response: %v", err)}
+
+	fmt.Println("Average of numbers is", resp.GetResult())
 }
