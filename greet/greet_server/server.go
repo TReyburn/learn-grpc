@@ -11,7 +11,7 @@ import (
 type server struct{}
 
 func main() {
-	fmt.Println("hello buf")
+	fmt.Println("hello im a server")
 
 	lis, err := net.Listen("tcp", "0.0.0.0:50051")
 	if err != nil {
