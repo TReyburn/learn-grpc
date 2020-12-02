@@ -25,7 +25,7 @@ message AverageRequest {
 }
 
 message AverageResponse {
-  int32 result = 1;
+  float result = 1;
 }
 
 service CalculatorService {
