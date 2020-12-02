@@ -21,7 +21,7 @@ func main() {
 
 	c := greetpb.NewGreetServiceClient(cc)
 
-	//doUnary(c)
+	// doUnary(c)
 	doServerStreaming(c)
 }
 
