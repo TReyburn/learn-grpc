@@ -11,6 +11,10 @@ import (
 
 type server struct{}
 
+func (s server) PrimeNumberDecomposition(request *calculatorpb.PrimeNumberRequest, decompositionServer calculatorpb.CalculatorService_PrimeNumberDecompositionServer) error {
+	panic("implement me")
+}
+
 func (s server) Sum(ctx context.Context, req *calculatorpb.SumRequest) (*calculatorpb.SumResponse, error) {
 	fmt.Println("Sum Service Invoked")
 	fn := req.GetFirstNum()
@@ -28,7 +32,7 @@ func main() {
 	}
 
 	s := grpc.NewServer()
-	calculatorpb.RegisterSumServiceServer(s, &server{})
+	calculatorpb.RegisterCalculatorServiceServer(s, &server{})
 
 	if err := s.Serve(lis); err != nil {
 		log.Fatalf("Failed to server: %v", err)

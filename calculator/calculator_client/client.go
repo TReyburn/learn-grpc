@@ -15,15 +15,15 @@ func main() {
 	}
 	defer cc.Close()
 
-	c := calculatorpb.NewSumServiceClient(cc)
+	c := calculatorpb.NewCalculatorServiceClient(cc)
 
 	callSum(c)
 }
 
-func callSum(c calculatorpb.SumServiceClient) {
+func callSum(c calculatorpb.CalculatorServiceClient) {
 	req := &calculatorpb.SumRequest{
-		FirstNum:  3,
-		SecondNum: 10,
+		FirstNum:  25,
+		SecondNum: 13,
 	}
 
 	resp, err := c.Sum(context.Background(), req)
