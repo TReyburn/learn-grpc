@@ -90,7 +90,7 @@ func callAverage(c calculatorpb.CalculatorServiceClient) {
 }
 
 func callMax(c calculatorpb.CalculatorServiceClient) {
-	nums := []int32{1, 5, 3, 6, 2, 20}
+	nums := []int32{1, 1, 3, 6, 2, 20, 8, -1}
 	stream, err := c.Max(context.Background())
 	if err != nil {log.Fatalf("Error opening stream to Average: %v", err)}
 
