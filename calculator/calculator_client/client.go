@@ -3,10 +3,12 @@ package main
 import (
 	"../calculatorpb"
 	"context"
+	"errors"
 	"fmt"
 	"google.golang.org/grpc"
 	"io"
 	"log"
+	"time"
 )
 
 func main() {
@@ -18,8 +20,9 @@ func main() {
 
 	c := calculatorpb.NewCalculatorServiceClient(cc)
 
-	//callSum(c)
-	callPrimeNumber(c)
+	// callSum(c)
+	// callPrimeNumber(c)
+	callAverage(c)
 }
 
 func callSum(c calculatorpb.CalculatorServiceClient) {
@@ -50,7 +53,7 @@ func callPrimeNumber(c calculatorpb.CalculatorServiceClient) {
 
 	for {
 		resp, err := stream.Recv()
-		if err == io.EOF {
+		if errors.Is(err, io.EOF) {
 			break
 		}
 		if err != nil {
@@ -59,6 +62,28 @@ func callPrimeNumber(c calculatorpb.CalculatorServiceClient) {
 		rs = append(rs, resp.GetResult())
 		fmt.Println("Number decomposes to:", resp.GetResult())
 	}
-	if len(rs) == 1 {fmt.Println(n, "is prime")} else {fmt.Println(n, "is not prime")}
+	if len(rs) == 1 {
+		fmt.Println(n, "is prime")
+	} else {
+		fmt.Println(n, "is not prime")
+	}
 	defer fmt.Println(n, "is equal to the following numbers multiplied together", rs)
+}
+
+func callAverage(c calculatorpb.CalculatorServiceClient) {
+	nums := []int32{12, 23, 13, 42, 69, 420}
+	stream, err := c.Average(context.Background())
+	if err != nil {log.Fatalf("Error opening stream to Average: %v", err)}
+
+	for _, num := range nums {
+		fmt.Println("Sending", num)
+		err := stream.Send(&calculatorpb.AverageRequest{Number: num})
+		if err != nil {log.Fatalf("Error streaming data: %v", err)}
+		time.Sleep(time.Second)
+	}
+
+	resp, err := stream.CloseAndRecv()
+	if err != nil {log.Fatalf("Error receiving response: %v", err)}
+
+	fmt.Println("Average of numbers is", resp.GetResult())
 }
