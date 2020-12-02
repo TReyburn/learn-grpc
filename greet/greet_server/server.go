@@ -28,7 +28,7 @@ func (s *server) LongGreet(stream greetpb.GreetService_LongGreetServer) error {
 			log.Fatalf("Error while streaming: %v", err)
 		}
 		fname := msg.GetGreeting().GetFirstName()
-		res = res + fname
+		res += fname
 	}
 }
 
@@ -43,7 +43,7 @@ func (s *server) GreetManyTimes(req *greetpb.GreetManyTimesRequest, stream greet
 	return nil
 }
 
-func (s *server) Greet(ctx context.Context, req *greetpb.GreetRequest) (*greetpb.GreetResponse, error) {
+func (s *server) Greet(_ context.Context, req *greetpb.GreetRequest) (*greetpb.GreetResponse, error) {
 	fmt.Printf("Greet call invoked: %v\n", req)
 	fn := req.GetGreeting().GetFirstName()
 	result := "Hello " + fn
