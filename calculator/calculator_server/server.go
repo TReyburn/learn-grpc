@@ -13,6 +13,23 @@ import (
 
 type server struct{}
 
+func (s server) Max(stream calculatorpb.CalculatorService_MaxServer) error {
+	fmt.Println("Max service invoked")
+	max := int32(0)
+
+	for {
+		req, err := stream.Recv()
+		if errors.Is(err, io.EOF) {return nil}
+		if err != nil {log.Fatalf("Error when receiving stream: %v", err)}
+		n := req.GetNumber()
+		if n > max {
+			max = n
+			err := stream.Send(&calculatorpb.MaxResponse{Result: max})
+			if err != nil {log.Fatalf("Error when sending stream: %v", err)}
+		}
+	}
+}
+
 func (s server) Average(stream calculatorpb.CalculatorService_AverageServer) error {
 	fmt.Println("Average service invoked")
 	nums := int32(0)

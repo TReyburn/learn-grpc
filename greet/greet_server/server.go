@@ -15,6 +15,20 @@ import (
 
 type server struct{}
 
+func (s *server) GreetEveryone(stream greetpb.GreetService_GreetEveryoneServer) error {
+	fmt.Println("Receieved a streaming request on GreetEveryone")
+
+	for {
+		req, err := stream.Recv()
+		if errors.Is(err, io.EOF) {return nil}
+		if err != nil {log.Fatalf("Error while reading client stream: %v", err)}
+		fname := req.GetGreeting().GetFirstName()
+		res := "Hello "+fname+"!"
+		err = stream.Send(&greetpb.GreetEveryoneResponse{Result: res})
+		if err != nil {log.Fatalf("Error when streaming to client: %v", err)}
+	}
+}
+
 func (s *server) LongGreet(stream greetpb.GreetService_LongGreetServer) error {
 	fmt.Println("Received a streaming response on LongGreet")
 	res := ""
