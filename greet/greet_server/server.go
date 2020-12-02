@@ -8,7 +8,7 @@ import (
 	"net"
 )
 
-type server struct {}
+type server struct{}
 
 func main() {
 	fmt.Println("hello buf")
