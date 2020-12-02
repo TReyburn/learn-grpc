@@ -59,6 +59,10 @@ func callPrimeNumber(c calculatorpb.CalculatorServiceClient) {
 		rs = append(rs, resp.GetResult())
 		fmt.Println("Number decomposes to:", resp.GetResult())
 	}
-	if len(rs) == 1 {fmt.Println(n, "is prime")} else {fmt.Println(n, "is not prime")}
+	if len(rs) == 1 {
+		fmt.Println(n, "is prime")
+	} else {
+		fmt.Println(n, "is not prime")
+	}
 	defer fmt.Println(n, "is equal to the following numbers multiplied together", rs)
 }
