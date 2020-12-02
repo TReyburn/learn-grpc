@@ -3,6 +3,7 @@ package main
 import (
 	"../greetpb"
 	"context"
+	"errors"
 	"fmt"
 	"google.golang.org/grpc"
 	"io"
@@ -52,7 +53,7 @@ func doServerStreaming(c greetpb.GreetServiceClient) {
 	}
 	for {
 		msg, err := stream.Recv()
-		if err == io.EOF {
+		if errors.Is(err, io.EOF) {
 			break
 		}
 		if err != nil {
