@@ -71,7 +71,7 @@ func callPrimeNumber(c calculatorpb.CalculatorServiceClient) {
 }
 
 func callAverage(c calculatorpb.CalculatorServiceClient) {
-	nums := []int32{10, 12, 34, 14, 17, 69, 420}
+	nums := []int32{12, 23, 13, 42, 69, 420}
 	stream, err := c.Average(context.Background())
 	if err != nil {log.Fatalf("Error opening stream to Average: %v", err)}
 
