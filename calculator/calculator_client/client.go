@@ -25,10 +25,11 @@ func callSum(c calculatorpb.SumServiceClient) {
 		FirstNum:  3,
 		SecondNum: 10,
 	}
+
 	resp, err := c.Sum(context.Background(), req)
 	if err != nil {
 		log.Fatalf("Error while calling Sum: %v", err)
 	}
 
-	fmt.Println("Our sum is:", resp.Result)
+	fmt.Println("Our sum is:", resp.GetResult())
 }
