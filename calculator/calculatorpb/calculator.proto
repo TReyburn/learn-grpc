@@ -13,11 +13,11 @@ message SumResponse {
 }
 
 message PrimeNumberRequest {
-  int64 number = 1;
+  int32 number = 1;
 }
 
 message PrimeNumberResponse {
-  int64 result = 1;
+  int32 result = 1;
 }
 
 service CalculatorService {
