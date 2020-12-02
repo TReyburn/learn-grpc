@@ -11,8 +11,10 @@ import (
 
 type server struct{}
 
-func (s server) PrimeNumberDecomposition(request *calculatorpb.PrimeNumberRequest, decompositionServer calculatorpb.CalculatorService_PrimeNumberDecompositionServer) error {
-	panic("implement me")
+func (s server) PrimeNumberDecomposition(req *calculatorpb.PrimeNumberRequest, stream calculatorpb.CalculatorService_PrimeNumberDecompositionServer) error {
+	n := req.GetNumber()
+	primeNumberDecomposition(n, stream)
+	return nil
 }
 
 func (s server) Sum(ctx context.Context, req *calculatorpb.SumRequest) (*calculatorpb.SumResponse, error) {
@@ -36,5 +38,19 @@ func main() {
 
 	if err := s.Serve(lis); err != nil {
 		log.Fatalf("Failed to server: %v", err)
+	}
+}
+
+func primeNumberDecomposition(n int32, steam calculatorpb.CalculatorService_PrimeNumberDecompositionServer) {
+	k := int32(2)
+	for n > 1 {
+		if n % k == 0 {
+			err := steam.Send(&calculatorpb.PrimeNumberResponse{Result: k}); if err != nil {
+				log.Fatalf("Error while attempting to send stream: %v", err)
+			}
+			n = n/k
+		} else {
+			k++
+		}
 	}
 }
