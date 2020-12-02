@@ -12,6 +12,7 @@ import (
 type server struct{}
 
 func (s server) PrimeNumberDecomposition(req *calculatorpb.PrimeNumberRequest, stream calculatorpb.CalculatorService_PrimeNumberDecompositionServer) error {
+	fmt.Println("Prime Number Decomposition Service Invoked")
 	n := req.GetNumber()
 	primeNumberDecomposition(n, stream)
 	return nil
